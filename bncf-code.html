@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BNCF - Official Site</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - VT323 for hacker look -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS for a more specific hacker look */
+        body {
+            margin: 0;
+            background-color: #0d1117; /* Dark background */
+            color: #00ff00; /* Bright green text */
+            overflow-y: auto; /* Allow vertical scrolling if content overflows */
+            display: flex;
+            flex-direction: column; /* Stack elements vertically */
+            justify-content: flex-start; /* Align content to the top */
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem; /* Add some padding to the body */
+            position: relative; /* For positioning content above canvas */
+            z-index: 1; /* For positioning content above canvas */
+        }
+
+        /* Apply VT323 only for English content */
+        html[lang="en"] body {
+            font-family: 'VT323', monospace; /* Added hacker font */
+        }
+
+        /* For Bengali content, use a system default or a generic font that supports Bengali */
+        html[lang="bn"] body {
+            font-family: sans-serif; /* A generic font for Bengali characters */
+        }
+
+        /* Matrix Rain Canvas Styling */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* To place it below content */
+            background-color: #0d1117; /* Canvas background */
+        }
+
+        /* Header Styling */
+        .main-header {
+            width: 90%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between; /* Distribute space between items */
+            align-items: center; /* Align items vertically */
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            border: none; /* Border removed */
+            box-shadow: none; /* Box-shadow removed */
+            background-color: transparent; /* Background-color removed */
+            border-radius: 0.5rem;
+        }
+
+        .header-text {
+            font-size: 1.25rem; /* Base font size */
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        /* Responsive font size for mobile screens */
+        @media (max-width: 640px) { /* For small screens (mobile) */
+            .header-text {
+                font-size: 1rem; /* Smaller font size on mobile */
+            }
+        }
+
+
+        .lang-button {
+            background-color: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem; /* Base font size */
+        }
+        /* Responsive font size for language buttons */
+        @media (max-width: 640px) { /* For small screens (mobile) */
+            .lang-button {
+                padding: 0.3rem 0.6rem; /* Smaller padding on mobile */
+                font-size: 0.75rem; /* Smaller font size on mobile */
+                margin-left: 0.25rem; /* Smaller margin on mobile */
+            }
+        }
+
+
+        .lang-button:hover {
+            background-color: #00ff00;
+            color: #0d1117;
+            box-shadow: 0 0 8px #00ff00;
+        }
+
+        /* Logo Bar Styling */
+        .logo-bar {
+            width: 90%;
+            max-width: 900px; /* Match max width of container */
+            text-align: center;
+            margin-bottom: 1rem; /* Space between logo and menu bar */
+            padding: 1rem;
+            border: none; /* Border removed */
+            box-shadow: none; /* Box-shadow removed */
+            background-color: transparent; /* Background-color removed */
+            border-radius: 0.5rem;
+            display: flex; /* Use flexbox for centering */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+        }
+
+        .logo-image {
+            max-width: 220px; /* Adjusted max width for slightly larger logo */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 0.25rem; /* Slightly rounded corners for image */
+            box-shadow: none; /* Box-shadow removed */
+            animation: pulse 2s infinite alternate; /* Add pulse animation */
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px #00ff00); /* Use filter for glow on transparent image */
+            }
+            100% {
+                transform: scale(1.05); /* Slightly enlarge */
+                filter: drop-shadow(0 0 25px #00ff00) drop-shadow(0 0 30px #00ff00); /* Stronger glow */
+            }
+        }
+
+        /* Navigation Bar Styling */
+        .navbar {
+            width: 90%;
+            max-width: 900px;
+            margin-bottom: 2rem; /* Space between menu bar and main content */
+            padding: 0.8rem 1rem;
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 0.5rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* Allow items to wrap on small screens */
+            gap: 1rem; /* Gap between items */
+        }
+
+        .navbar a {
+            color: #00ff00;
+            text-decoration: none; /* Underline removed */
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .navbar a:hover {
+            background-color: #00ff00;
+            color: #0d1117;
+            box-shadow: 0 0 8px #00ff00;
+        }
+        /* Font size for navigation items on mobile screens */
+        @media (max-width: 640px) {
+            .navbar a {
+                font-size: 0.85rem; /* Smaller font size on mobile */
+                padding: 0.4rem 0.8rem; /* Smaller padding on mobile */
+            }
+        }
+
+
+        .section-container {
+            width: 90%;
+            max-width: 900px;
+            padding: 2rem;
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 15px #00ff00;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .section-container h1, .section-container h2 {
+            text-shadow: 0 0 10px #00ff00;
+            text-align: center;
+            width: 100%;
+        }
+
+        .section-container ul, .section-container p {
+            text-align: left;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 80%;
+        }
+        @media (max-width: 640px) {
+            .section-container ul, .section-container p {
+                max-width: 100%;
+            }
+        }
+
+
+        .typing-effect::after {
+            content: '|';
+            animation: blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #00ff00; }
+        }
+
+        /* Footer Styling */
+        .main-footer {
+            width: 90%;
+            max-width: 900px;
+            text-align: center;
+            padding: 1rem;
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            color: #00ff00;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .section-container, .logo-bar, .main-header, .main-footer, .navbar {
+                max-width: 700px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .section-container, .logo-bar, .main-header, .main-footer, .navbar {
+                max-width: 900px;
+            }
+        }
+
+        /* Contact Button Specific Styling */
+        .contact-button {
+            background-color: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 5px #00ff00;
+        }
+
+        .contact-button:hover {
+            background-color: #00ff00;
+            color: #0d1117;
+            box-shadow: 0 0 15px #00ff00;
+            transform: scale(1.05);
+        }
+        /* Font size for contact button on mobile screens */
+        @media (max-width: 640px) {
+            .contact-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+                gap: 0.5rem;
+            }
+            .contact-button img {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        /* Operation Box Styling */
+        .operation-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column on small screens */
+            gap: 1.5rem;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        @media (min-width: 640px) { /* Two columns on medium screens */
+            .operation-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 1024px) { /* Three columns on large screens */
+            .operation-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        .operation-box {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex; /* Use flexbox for vertical alignment of content */
+            flex-direction: column;
+            align-items: center; /* Center items horizontally within the box */
+        }
+
+        .operation-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        .operation-box img {
+            max-width: 120px; /* Adjusted image size for better visibility */
+            height: auto;
+            margin-top: 0.75rem; /* Space between title and image */
+            margin-bottom: 0.75rem; /* Space between image and description */
+            filter: drop-shadow(0 0 5px #00ff00); /* Green glow for icons */
+        }
+
+        .operation-box h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00ff00;
+            margin-bottom: 0; /* Removed default margin to control spacing with image */
+            text-shadow: 0 0 8px #00ff00;
+        }
+
+        .operation-box p {
+            font-size: 1rem;
+            color: #00cc00;
+            line-height: 1.5;
+            text-align: center; /* Center align text within the box */
+        }
+        /* Flag Styling */
+        .flag-container {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .flag-container.right { /* New class for right-aligned flag */
+            left: auto;
+            right: 1rem;
+        }
+
+        .flag-image {
+            width: 80px; /* Increased flag width */
+            height: 50px; /* Increased flag height */
+            border-radius: 0.25rem;
+            box-shadow: 0 0 10px #00ff00; /* Green glow */
+            filter: drop-shadow(0 0 5px #00ff00);
+            transition: all 0.3s ease;
+        }
+
+        .flag-image:hover {
+            transform: scale(1.05); /* Slightly enlarge on hover */
+        }
+
+        .flag-text {
+            /* Removed this style block to hide the text */
+            display: none; /* Hide the text */
+        }
+
+        /* Responsive adjustments for flag */
+        @media (max-width: 640px) {
+            .flag-image {
+                width: 60px; /* Adjusted width for mobile */
+                height: 40px; /* Adjusted height for mobile */
+            }
+            /* .flag-text { Removed as text is hidden globally now } */
+        }
+        /* Pop-up Ad Styling */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black overlay */
+            display: none; /* Initially hidden */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top of everything */
+        }
+
+        .popup-overlay.visible {
+            display: flex; /* Makes the popup visible */
+        }
+
+        .popup-content {
+            background-color: #000000; /* Black background for the pop-up content */
+            border: 2px solid #EE2A35; /* Red border from Palestine flag */
+            box-shadow: 0 0 20px #EE2A35; /* Red glow for the pop-up */
+            border-radius: 0.75rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            transform: scale(0.9); /* Start slightly smaller */
+            transition: transform 0.3s ease-in-out;
+            font-family: 'VT323', monospace; /* Match hacker theme font */
+        }
+
+        .popup-overlay.visible .popup-content {
+            transform: scale(1); /* Scale to normal size when visible */
+        }
+
+        .popup-content h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFFFFF; /* White title text */
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7); /* Subtle white shadow for clarity */
+            margin-bottom: 1rem;
+        }
+
+        .popup-content p {
+            font-size: 1.1rem;
+            color: #009736; /* Green description text from Palestine flag */
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .popup-action-button {
+            display: inline-block;
+            background-color: transparent;
+            border: 1px solid #FFFFFF; /* White border */
+            color: #EE2A35; /* Red text from Palestine flag */
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 5px #FFFFFF; /* White shadow */
+            cursor: pointer; /* Ensure it looks clickable */
+        }
+
+        .popup-action-button:hover {
+            background-color: #009736; /* Green background on hover from Palestine flag */
+            color: #FFFFFF; /* White text on hover */
+            box-shadow: 0 0 15px #009736; /* Green glow on hover */
+            transform: scale(1.05);
+        }
+
+        .popup-image {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 1.5rem; /* Space below the image */
+            border-radius: 0.5rem;
+            box-shadow: 0 0 10px #EE2A35; /* Red glow for visual consistency */
+        }
+
+        /* Responsive adjustments for pop-up */
+        @media (max-width: 640px) {
+            .popup-content {
+                padding: 1.5rem;
+            }
+            .popup-content h2 {
+                font-size: 1.5rem;
+            }
+            .popup-content p {
+                font-size: 0.9rem;
+            }
+            .popup-action-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+        /* New CSS for responsive iframe */
+        .video-iframe-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio (height / width * 100) */
+            height: 0;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 15px #00ff00; /* Green glow for the video container */
+            border: 1px solid #00ff00; /* Green border */
+        }
+
+        .video-iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0; /* Remove iframe default border */
+        }
+    </style>
+</head>
+<body>
+    <div id="popupOverlay" class="popup-overlay">
+        <div class="popup-content">
+            <h2 id="popup-title"></h2>
+            <img id="popup-image" src="" alt="Pop-up Image" class="popup-image">
+            <p id="popup-description"></p>
+            <a href="#home" id="popup-action-button" class="popup-action-button" onclick="hidePopup(); return false;"></a>
+        </div>
+    </div>
+    <!-- Matrix Rain Canvas -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div id="header-text" class="header-text">
+            বাংলাদেশ ন্যাশনাল সাইবার ফোর্স - বিএনসিএফ
+        </div>
+        <div class="language-selector">
+            <button class="lang-button" onclick="setLanguage('en')">English</button>
+            <button class="lang-button" onclick="setLanguage('bn')">বাংলা</button>
+        </div>
+    </header>
+
+    <!-- Logo Bar -->
+    <div class="logo-bar">
+        <img src="https://i.ibb.co/4wsG7VBm/BNCF-Logo-without-BG.png" alt="BNCF-Logo" class="logo-image" onerror="this.onerror=null;this.src='https://placehold.co/180xauto/0d1117/00ff00?text=BNCF+Logo';">
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="#home" id="nav-home" onclick="scrollToSection(event, 'home');">Home</a>
+        <a href="#about" id="nav-about" onclick="scrollToSection(event, 'about');">About Us</a>
+        <a href="#services" id="nav-services" onclick="scrollToSection(event, 'services');">Services</a>
+        <a href="#contact" id="nav-contact" onclick="scrollToSection(event, 'contact');">Contact</a>
+    </nav>
+
+    <!-- Home Section -->
+    <div id="home" class="section-container flex flex-col items-center space-y-6">
+        <h1 id="home-title" class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">FUCK YOUR SYSTEM</h1>
+        <!-- Video container removed -->
+        <p id="home-typing-text" class="text-lg md:text-xl lg:text-2xl typing-effect"></p>
+
+        <div class="w-full">
+            <h2 id="home-access-logs-title" class="text-2xl md:text-3xl font-semibold mb-2 mt-4">SCUM OF THE EARTHS</h2>
+            <ul id="home-access-logs-list" class="list-disc list-inside text-base md:text-lg">
+                <li>Aunt America...</li>
+                <li>Anti Isreal...</li>
+                <li>Anti India...</li>
+                <li>Fuck Benjamin Netanyahu...</li> 
+                <li>Fuck Narendra Modi...</li> 
+                <li>Fuck Donald Trump...</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- About Us Section -->
+    <div id="about" class="section-container flex flex-col items-center space-y-6">
+        <h2 id="about-us-title" class="text-3xl md:text-4xl font-bold mb-4">ABOUT US</h2>
+        <p id="about-us-paragraph1" class="text-base md:text-lg leading-relaxed"></p>
+        <p id="about-us-paragraph2" class="text-base md:text-lg leading-relaxed"></p>
+        <h3 id="about-us-work-scope-title" class="text-2xl md:text-3xl font-semibold mb-2 mt-4"></h3>
+        <ul id="about-us-work-scope-list" class="list-disc list-inside text-base md:text-lg space-y-2"></ul>
+        <h3 id="about-us-principle-title" class="text-2xl md:text-3xl font-semibold mb-2 mt-4"></h3>
+        <p id="about-us-principle-text" class="text-base md:text-lg leading-relaxed"></p>
+    </div>
+
+    <!-- Services Section (Updated to Our Operations and Mission) -->
+    <div id="services" class="section-container flex flex-col items-center space-y-6">
+        <h2 id="services-offered-title" class="text-3xl md:text-4xl font-bold mb-4">OUR OPERATIONS AND MISSION</h2>
+        <p id="operations-mission-paragraph1" class="text-base md:text-lg leading-relaxed">
+            We are dedicated to safeguarding digital landscapes through proactive measures and relentless pursuit of cyber threats. Our operations span across various domains, focusing on intelligence gathering, defensive strategies, and ethical offensive capabilities to neutralize hostile elements.
+        </p>
+        <p id="operations-mission-paragraph2" class="text-base md:text-lg leading-relaxed">
+            Our mission is to protect critical infrastructure, sensitive data, and national digital sovereignty. We strive to stay ahead of evolving cyber warfare tactics, ensuring the safety and integrity of our digital borders.
+        </p>
+
+        <!-- Operations Grid -->
+        <div class="operation-grid">
+            <!-- Operation 1: Operations Clean Net -->
+            <div class="operation-box">
+                <h3 id="op-clean-net-title">Operations Clean Net</h3>
+                <img id="op-clean-net-image" src="https://i.ibb.co/7NTNTTGX/500224547-122150828666521907-3479009487948046361-n.jpg" alt="Clean Net Icon" onerror="this.onerror=null;this.src='https://placehold.co/120x120/0d1117/00ff00?text=CLEAN';">
+                <p id="op-clean-net-description"></p>
+            </div>
+
+            <!-- Operation 2: Operation Stealth Shield -->
+            <div class="operation-box">
+                <h3 id="op-placeholder2-title">Operation Stealth Shield</h3>
+                <img id="op-placeholder2-image" src="https://placehold.co/120x120/0d1117/00ff00?text=SHIELD" alt="Stealth Shield Icon">
+                <p id="op-placeholder2-description">Dedicated to developing advanced defensive mechanisms and secure protocols to protect critical national infrastructure from sophisticated cyber attacks.</p>
+            </div>
+
+            <!-- Operation 3: Operation Digital Sentinel -->
+            <div class="operation-box">
+                <h3 id="op-placeholder3-title">Operation Digital Sentinel</h3>
+                <img id="op-placeholder3-image" src="https://placehold.co/120x120/0d1117/00ff00?text=SENTINEL" alt="Digital Sentinel Icon">
+                <p id="op-placeholder3-description">Involves continuous monitoring of global cyber threats, analyzing emerging attack vectors, and providing real-time intelligence to preempt potential breaches.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div id="contact" class="section-container flex flex-col items-center">
+        <h2 id="contact-us-title" class="text-3xl md:text-4xl font-bold mb-4">Contact Us</h2>
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4">
+            <!-- Added hover animations to contact buttons -->
+            <a href="https://www.facebook.com/BangladeshNationalCyberForce" target="_blank" class="no-underline">
+                <div id="facebook-button" class="contact-button">
+                    <img src="https://img.icons8.com/fluency/48/facebook-new.png" alt="Facebook" class="w-6 h-6" onerror="this.onerror=null;this.src='https://placehold.co/24x24/0d1117/00ff00?text=FB';">
+                    Connect on Facebook
+                </div>
+            </a>
+            <a href="mailto:bncf.contact@gmail.com" class="no-underline">
+                <div id="email-button" class="contact-button">
+                    <img src="https://img.icons8.com/fluency/48/gmail-new.png" alt="Email" class="w-6 h-6" onerror="this.onerror=null;this.src='https://placehold.co/24x24/0d1117/00ff00?text=Email';">
+                    Email Us
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <p id="footer-copyright">©2025 Bangladesh National Cyber Force - BNCF. All rights reserved.</p>
+        <p id="footer-safety">Your Are Not Safe</p>
+    </footer>
+    <!-- Bangladesh Flag (Left) -->
+    <div class="flag-container">
+        <img id="bangladesh-flag-left" src="https://i.ibb.co/bMCPV7r4/flag.png" alt="Bangladesh Flag" class="flag-image" onerror="this.onerror=null;this.src='https://placehold.co/60x40/0d1117/00ff00?text=Flag';">
+        <span id="flag-text-left" class="flag-text"></span>
+    </div>
+
+    <!-- Bangladesh Flag (Right) -->
+    <div class="flag-container right">
+        <img id="bangladesh-flag-right" src="https://i.ibb.co/S7fKjNQ4/flag.png" alt="Bangladesh Flag" class="flag-image" onerror="this.onerror=null;this.src='https://placehold.co/60x40/0d1117/00ff00?text=Flag';">
+        <span id="flag-text-right" class="flag-text"></span>
+    </div>
+
+    <script>
+        // Store all translatable content
+        const translations = {
+            'en': {
+                'header-text': 'Bangladesh National Cyber Force - BNCF',
+                'nav-home': 'Home',
+                'nav-about': 'About Us',
+                'nav-services': 'Our Operations and Mission', // Updated navigation text
+                'nav-contact': 'Contact',
+                'home-title': 'FUCK YOUR SYSTEM',
+                'home-typing-phrases': [
+                    "Prayer is the key to Paradise...",
+                    "Be patient; indeed, Allah is with the patient...",
+                    "Insulting others online is forbidden in Islam...",
+                    "Utilize social media for good, don't waste time...",
+                    "Refrain from sharing indecent content."
+                ],
+                'home-access-logs-title': ' SCUM OF THE EARTHS',
+                'home-access-logs-list': [
+                    ' Anti Isreal...',
+                    ' Anti India...',
+                    ' Aunt America...',
+                    ' Fuck Donald Trump',
+                    ' Fuck Benjamin Netanyahu.',
+                    ' Fuck Narendra Modi...'
+                ],
+                'about-us-title': 'ABOUT US',
+                'about-us-paragraph1': 'Bangladesh National Cyber Force (BNCF) is an independent, volunteer-based cyber security organization established in March 2023. Our mission is to defend Bangladesh\'s digital landscape and promote public awareness regarding cyber safety.',
+                'about-us-paragraph2': 'We are committed to protecting the nation through technology. We regularly carry out cyber operations and missions that serve national interests and digital security.',
+                'about-us-work-scope-title': 'Our Key Activities:',
+                'about-us-work-scope-list': [
+                    'Detect and report cybercrimes, fake news, and disinformation',
+                    'Take action against anti-Islamic, 18+, and anti-Bangladesh content',
+                    'Educate the youth in ethical hacking and responsible cyber practices',
+                    'Actively participate in campaigns like "Operation Clean Net"',
+                    'Raise awareness and provide guidance on safe internet usage'
+                ],
+                'about-us-principle-title': 'Our Motto:',
+                'about-us-principle-text': '"Defend with Technology, Act with Ethics"',
+                'services-offered-title': 'OUR OPERATIONS AND MISSION', // Updated title
+                'operations-mission-paragraph1': 'We are dedicated to safeguarding digital landscapes through proactive measures and relentless pursuit of cyber threats. Our operations span across various domains, focusing on intelligence gathering, defensive strategies, and ethical offensive capabilities to neutralize hostile elements.',
+                'operations-mission-paragraph2': 'Our mission is to protect critical infrastructure, sensitive data, and national digital sovereignty. We strive to stay ahead of evolving cyber warfare tactics, ensuring the safety and integrity of our digital borders.',
+                // Operations
+                'op-clean-net-title': 'Operations Clean Net',
+                'op-clean-net-description': 'Operation Clean Net is a cyber awareness and defense campaign by the Bangladesh National Cyber Force. Its goal is to keep the internet free from harmful content like pornography, fake news, anti-Islamic and anti-Bangladesh propaganda. We identify, report, and act regularly to ensure a safe and ethical digital space.',
+                'op-clean-net-image': 'https://i.ibb.co/7NTNTTGX/500224547-122150828666521907-3479009487948046361-n.jpg',
+                'op-placeholder2-title': 'Operation Stealth Shield',
+                'op-placeholder2-description': 'Dedicated to developing advanced defensive mechanisms and secure protocols to protect critical national infrastructure from sophisticated cyber attacks.',
+                'op-placeholder2-image': 'https://placehold.co/120x120/0d1117/00ff00?text=SHIELD',
+                'op-placeholder3-title': 'Operation Digital Sentinel',
+                'op-placeholder3-description': 'Involves continuous monitoring of global cyber threats, analyzing emerging attack vectors, and providing real-time intelligence to preempt potential breaches.',
+                'op-placeholder3-image': 'https://placehold.co/120x120/0d1117/00ff00?text=SENTINEL',
+
+                'contact-us-title': 'Contact Us',
+                'facebook-button': 'Connect on Facebook',
+                'email-button': 'Email Us',
+                'footer-copyright': '© 2025 Bangladesh National Cyber Force - BNCF. All rights reserved.',
+                'footer-safety': 'You Are Not Safe in Internet',
+                'flag-text': '', /* Removed flag text */
+                'popup-title': 'Free Palestine!',
+                'popup-description': 'We stand with Gaza and support the cause of a free Palestine. Your solidarity makes a difference.',
+                'popup-button-text': 'Learn More'
+            },
+            'bn': {
+                'header-text': 'বাংলাদেশ ন্যাশনাল সাইবার ফোর্স - বিএনসিএফ',
+                'nav-home': 'হোম',
+                'nav-about': 'আমাদের সম্পর্কে',
+                'nav-services': 'আমাদের কার্যক্রম ও লক্ষ্য', // Updated navigation text
+                'nav-contact': 'যোগাযোগ',
+                'home-title': 'আপনার সিস্টেমকে ধ্বংস করুন',
+                'home-typing-phrases': [
+                    "নামাজ বেহেশতের চাবি।...",
+                    "ধৈর্য ধারণ করো, নিশ্চয়ই আল্লাহ ধৈর্যশীলদের সাথে আছেন।...",
+                    "অনলাইনে অন্যের সম্মানহানি করা ইসলামে নিষিদ্ধ।...",
+                    "সময় নষ্ট না করে সামাজিক মাধ্যমকে কল্যাণের কাজে লাগাও।...",
+                    "অশালীন বিষয় শেয়ার করা থেকে বিরত থাকো।..."
+                ],
+                'home-access-logs-title': 'পৃথিবীর ময়লা',
+                'home-access-logs-list': [
+                    'ইসরায়েল বিরোধী...',
+                    'ভারত বিরোধী..',
+                    'আমেরিকা বিরোধী...',
+                    'ফাক বেঞ্জামিন নেতানিয়াহু..',
+                    'ফাক নরেন্দ্র মোদিকে ...',
+                    'ফাক ডোনাল্ড ট্রাম্প'
+                ],
+                'about-us-title': 'আমাদের সম্পর্কে',
+                'about-us-paragraph1': 'বাংলাদেশ ন্যাশনাল সাইবার ফোর্স (BNCF) একটি স্বাধীন, স্বেচ্ছাসেবী ও প্রযুক্তিনির্ভর সাইবার নিরাপত্তা সংগঠন, যার যাত্রা শুরু হয় মার্চ ২০২৩ সালে। এই সংগঠনের মূল লক্ষ্য হলো বাংলাদেশের ডিজিটাল নিরাপত্তা নিশ্চিত করা এবং জনগণের মধ্যে সাইবার সচেতনতা গড়ে তোলা।',
+                'about-us-paragraph2': 'আমরা প্রযুক্তির মাধ্যমে দেশরক্ষায় প্রতিশ্রুতিবদ্ধ এবং দেশের ডিজিটাল পরিসরে যেকোনো হুমকির বিরুদ্ধে রুখে দাঁড়াই। বিভিন্ন সময় আমরা গুরুত্বপূর্ণ সাইবার অপারেশন ও মিশন পরিচালনা করে থাকি — যা জাতীয় স্বার্থে গুরুত্বপূর্ণ ভূমিকা রাখে।',
+                'about-us-work-scope-title': 'আমাদের কাজের পরিধি:',
+                'about-us-work-scope-list': [
+                    'সাইবার অপরাধ, ভুয়া তথ্য ও গুজব শনাক্ত ও রিপোর্ট করা',
+                    'ইসলামবিরোধী, ১৮+ ও বাংলাদেশবিরোধী কনটেন্টের বিরুদ্ধে অ্যাকশন',
+                    'তরুণ প্রজন্মকে Ethical Hacking ও Responsible Cyber Practice শিক্ষা দেওয়া',
+                    '“Operation Clean Net” সহ বিভিন্ন সাইবার অভিযানে সক্রিয় অংশগ্রহণ',
+                    'সাইবার নিরাপত্তা নিয়ে জনসচেতনতা তৈরি ও গাইডলাইন প্রদান'
+                ],
+                'about-us-principle-title': 'আমাদের মূলনীতি:',
+                'about-us-principle-text': '"প্রযুক্তি দিয়ে দেশ রক্ষা, নৈতিকতায় পথচলা"',
+                'services-offered-title': 'আমাদের কার্যক্রম ও লক্ষ্য', // Updated title
+                'operations-mission-paragraph1': 'আমরা সক্রিয় পদক্ষেপ এবং সাইবার হুমকির নিরলস অনুসরণের মাধ্যমে ডিজিটাল ল্যান্ডস্কেপ সুরক্ষায় নিবেদিত। আমাদের কার্যক্রম বিভিন্ন ডোমেন জুড়ে বিস্তৃত, যা গোয়েন্দা সংগ্রহ, প্রতিরক্ষামূলক কৌশল এবং প্রতিকূল উপাদানগুলিকে নিষ্ক্রিয় করার জন্য নৈতিক আক্রমণাত্মক সক্ষমতার উপর দৃষ্টি নিবদ্ধ করে।',
+                'operations-mission-paragraph2': 'আমাদের লক্ষ্য হল গুরুত্বপূর্ণ অবকাঠামো, সংবেদনশীল ডেটা এবং জাতীয় ডিজিটাল সার্বভৌমত্ব রক্ষা করা। আমরা ক্রমবর্ধমান সাইবার যুদ্ধ কৌশলের চেয়ে এগিয়ে থাকার চেষ্টা করি, আমাদের ডিজিটাল সীমানার নিরাপত্তা এবং অখণ্ডতা নিশ্চিত করি।',
+                // Operations
+                'op-clean-net-title': 'অপারেশন ক্লিন নেট',
+                'op-clean-net-description': 'অপারেশন ক্লিন নেট হলো বাংলাদেশ ন্যাশনাল সাইবার ফোর্সের একটি সচেতনতামূলক ও প্রতিরোধমূলক সাইবার অভিযান। এর লক্ষ্য হলো অনলাইন পরিসরকে অশ্লীলতা, গুজব, ধর্মবিদ্বেষ ও বাংলাদেশবিরোধী কনটেন্ট থেকে মুক্ত রাখা। আমরা নিয়মিত ক্ষতিকর পোস্ট শনাক্ত, রিপোর্ট ও অপসারণে কাজ করি — একটি নিরাপদ ও নৈতিক ডিজিটাল বাংলাদেশ গড়ার লক্ষ্যে।',
+                'op-clean-net-image': 'https://i.ibb.co/7NTNTTGX/500224547-122150828666521907-3479009487948046361-n.jpg',
+                'op-placeholder2-title': 'অপারেশন স্টিলথ শিল্ড',
+                'op-placeholder2-description': ' অত্যাধুনিক সাইবার আক্রমণ থেকে গুরুত্বপূর্ণ জাতীয় অবকাঠামো রক্ষা করার জন্য উন্নত প্রতিরক্ষামূলক ব্যবস্থা এবং নিরাপদ প্রোটোকল বিকাশে নিবেদিত।',
+                'op-placeholder2-image': 'https://placehold.co/120x120/0d1117/00ff00?text=SHIELD',
+                'op-placeholder3-title': 'অপারেশন ডিজিটাল সেন্টিনেল',
+                'op-placeholder3-description': 'বৈশ্বিক সাইবার হুমকিগুলির ক্রমাগত পর্যবেক্ষণ, উদীয়মান আক্রমণ ভেক্টর বিশ্লেষণ এবং সম্ভাব্য লঙ্ঘন প্রতিরোধে রিয়েল-টাইম গোয়েন্দা তথ্য সরবরাহ করা জড়িত।',
+                'op-placeholder3-image': 'https://placehold.co/120x120/0d1117/00ff00?text=SENTINEL',
+
+                'contact-us-title': 'যোগাযোগ করুন',
+                'facebook-button': 'ফেসবুকে সংযোগ করুন',
+                'email-button': 'আমাদের ইমেইল করুন',
+                'footer-copyright': '© ২০২৫ বাংলাদেশ ন্যাশনাল সাইবার ফোর্স - বিএনসিএফ। সর্বস্বত্ব সংরক্ষিত।',
+                'footer-safety': 'আপনি ইন্টারনেটে নিরাপদ নন',
+                'flag-text': '', /* Removed flag text */
+                'popup-title': 'ফ্রি প্যালেস্টাইন!', // Updated to Bengali
+                'popup-description': 'আমরা গাজার সাথে আছি এবং স্বাধীন ফিলিস্তিনের পক্ষে সমর্থন জানাই। আপনার সংহতি পরিবর্তন আনতে পারে।',
+                'popup-button-text': 'আরও জানুন'
+            }
+        };
+
+        let stopTypingEffect = null; // Global variable to store the stop function
+
+        /**
+         * Single-pass typing effect function. Types a single string (plain text).
+         * @param {HTMLElement} element The HTML element to type into.
+         * @param {string} text The text to type.
+         * @param {number} delay The delay between each character.
+         * @returns {Promise<void>} A promise that resolves when typing is complete.
+         */
+        function typeSingleString(element, text, delay) {
+            return new Promise(resolve => {
+                let i = 0;
+                element.textContent = ''; // Clear previous text
+                function type() {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(type, delay);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
+
+        /**
+         * Multi-phrase typing effect function. Cycles through an array of phrases.
+         * Returns a function to stop the effect.
+         */
+        async function typeWriterEffect(element, phrases, typingDelay = 70, phraseDelay = 1500) {
+            let phraseIndex = 0;
+            let shouldStop = false;
+
+            // Function to stop the typing effect
+            const stop = () => {
+                shouldStop = true;
+                element.textContent = ''; // Clear text immediately when stopped
+            };
+
+            // Store the stop function globally
+            stopTypingEffect = stop;
+
+            while (!shouldStop) {
+                const currentPhrase = phrases[phraseIndex];
+                await typeSingleString(element, currentPhrase, typingDelay);
+                if (shouldStop) break; // Check again after typing a phrase
+
+                await new Promise(resolve => setTimeout(resolve, phraseDelay)); // Pause after typing
+                if (shouldStop) break; // Check again after pause
+                
+                // Clear the text by backspacing
+                let currentText = element.textContent;
+                while (currentText.length > 0 && !shouldStop) {
+                    currentText = currentText.slice(0, -1);
+                    element.textContent = currentText;
+                    await new Promise(resolve => setTimeout(resolve, typingDelay / 2)); // Faster backspacing
+                }
+                if (shouldStop) break; // Check again after backspacing
+
+                await new Promise(resolve => setTimeout(resolve, 500)); // Short pause after clearing
+                if (shouldStop) break; // Check again after short pause
+
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+            }
+            // Reset stopTypingEffect when the loop finishes naturally (though it's an infinite loop here)
+            // In a real scenario where the loop might end, this would be important.
+            if (shouldStop) {
+                stopTypingEffect = null;
+            }
+        }
+
+        // Pop-up Ad Functionality
+        const popupOverlay = document.getElementById('popupOverlay');
+        const popupTitle = document.getElementById('popup-title');
+        const popupImage = document.getElementById('popup-image');
+        const popupDescription = document.getElementById('popup-description');
+        const popupActionButton = document.getElementById('popup-action-button');
+
+        /**
+         * Shows the pop-up with dynamic content.
+         * @param {string} title The title of the pop-up.
+         * @param {string} imageUrl The URL of the image to display.
+         * @param {string} description The description text.
+         * @param {string} buttonText The text for the action button.
+         * @param {string} buttonLink The URL for the action button.
+         */
+        function showPopup(title, imageUrl, description, buttonText, buttonLink) {
+            popupTitle.textContent = title;
+            popupImage.src = imageUrl;
+            // Updated onerror to reflect the new image's likely aspect ratio
+            popupImage.onerror = function() { this.onerror=null; this.src='https://placehold.co/400x600/0d1117/EE2A35?text=Image+Not+Found'; };
+            popupDescription.textContent = description;
+            popupActionButton.textContent = buttonText;
+            popupActionButton.href = buttonLink;
+            popupOverlay.classList.add('visible');
+
+            // Store current popup content for language switching
+            currentPopupContent = { title, imageUrl, description, buttonText, buttonLink };
+        }
+
+        /**
+         * Hides the pop-up.
+         */
+        function hidePopup() {
+            popupOverlay.classList.remove('visible');
+        }
+
+        /**
+         * Smooth scrolls to a given section.
+         * @param {Event} event The click event.
+         * @param {string} sectionId The ID of the section to scroll to.
+         */
+        function scrollToSection(event, sectionId) {
+            event.preventDefault(); // Prevent default anchor link behavior
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let columns;
+        let drops;
+        const fontSize = 20; // Increased font size for better visibility
+
+        function initializeMatrixRain() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            columns = Math.floor(canvas.width / fontSize);
+            drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1; // Start drops at the first row
+            }
+        }
+
+        // Characters for the Matrix rain
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>/?';
+
+        function drawMatrixRain() {
+            // Semi-transparent black rectangle to fade out old characters
+            ctx.fillStyle = 'rgba(13, 17, 23, 0.05)'; // Match body background with transparency
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff00'; // Green text
+            ctx.font = `${fontSize}px 'VT323', monospace`; // Use VT323 for Matrix rain
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                // Send the drop back to the top randomly after it crosses the screen
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        /**
+         * Sets the language of the page.
+         * @param {string} lang 'en' for English, 'bn' for Bengali.
+         */
+        function setLanguage(lang) {
+            document.documentElement.lang = lang; // Set HTML lang attribute for CSS font rules
+
+            // Update header text
+            document.getElementById('header-text').textContent = translations[lang]['header-text'];
+
+            // Update navigation links
+            document.getElementById('nav-home').textContent = translations[lang]['nav-home'];
+            document.getElementById('nav-about').textContent = translations[lang]['nav-about'];
+            document.getElementById('nav-services').textContent = translations[lang]['nav-services'];
+            document.getElementById('nav-contact').textContent = translations[lang]['nav-contact'];
+
+            // Update Home Section
+            document.getElementById('home-title').textContent = translations[lang]['home-title'];
+            
+            // Stop any existing typing effect before starting a new one
+            if (stopTypingEffect) {
+                stopTypingEffect();
+            }
+            const homeTypingTextElement = document.getElementById('home-typing-text');
+            // Start a new typing effect
+            typeWriterEffect(homeTypingTextElement, translations[lang]['home-typing-phrases']);
+
+            document.getElementById('home-access-logs-title').textContent = translations[lang]['home-access-logs-title'];
+            const accessLogsList = document.getElementById('home-access-logs-list');
+            accessLogsList.innerHTML = ''; // Clear existing list items
+            translations[lang]['home-access-logs-list'].forEach(itemText => {
+                const li = document.createElement('li');
+                li.textContent = itemText;
+                accessLogsList.appendChild(li);
+            });
+
+            // Update About Us Section
+            document.getElementById('about-us-title').textContent = translations[lang]['about-us-title'];
+            document.getElementById('about-us-paragraph1').textContent = translations[lang]['about-us-paragraph1'];
+            document.getElementById('about-us-paragraph2').textContent = translations[lang]['about-us-paragraph2'];
+            document.getElementById('about-us-work-scope-title').textContent = translations[lang]['about-us-work-scope-title'];
+            const workScopeList = document.getElementById('about-us-work-scope-list');
+            workScopeList.innerHTML = ''; // Clear existing list items
+            translations[lang]['about-us-work-scope-list'].forEach(itemText => {
+                const li = document.createElement('li');
+                li.textContent = itemText;
+                workScopeList.appendChild(li);
+            });
+            document.getElementById('about-us-principle-title').textContent = translations[lang]['about-us-principle-title'];
+            document.getElementById('about-us-principle-text').textContent = translations[lang]['about-us-principle-text'];
+
+            // Update Services Section (Our Operations and Mission)
+            document.getElementById('services-offered-title').textContent = translations[lang]['services-offered-title'];
+            document.getElementById('operations-mission-paragraph1').textContent = translations[lang]['operations-mission-paragraph1'];
+            document.getElementById('operations-mission-paragraph2').textContent = translations[lang]['operations-mission-paragraph2'];
+
+            // Update Operations Boxes
+            document.getElementById('op-clean-net-title').textContent = translations[lang]['op-clean-net-title'];
+            document.getElementById('op-clean-net-image').src = translations[lang]['op-clean-net-image'];
+            document.getElementById('op-clean-net-description').textContent = translations[lang]['op-clean-net-description'];
+
+            document.getElementById('op-placeholder2-title').textContent = translations[lang]['op-placeholder2-title'];
+            document.getElementById('op-placeholder2-description').textContent = translations[lang]['op-placeholder2-description'];
+            // Image src for placeholder2 is static, no need to change.
+
+            document.getElementById('op-placeholder3-title').textContent = translations[lang]['op-placeholder3-title'];
+            document.getElementById('op-placeholder3-description').textContent = translations[lang]['op-placeholder3-description'];
+            // Image src for placeholder3 is static, no need to change.
+
+            // Update Contact Section
+            document.getElementById('contact-us-title').textContent = translations[lang]['contact-us-title'];
+            document.getElementById('facebook-button').childNodes[2].nodeValue = translations[lang]['facebook-button']; // Text node after img
+            document.getElementById('email-button').childNodes[2].nodeValue = translations[lang]['email-button']; // Text node after img
+
+            // Update Footer
+            document.getElementById('footer-copyright').textContent = translations[lang]['footer-copyright'];
+            document.getElementById('footer-safety').textContent = translations[lang]['footer-safety'];
+
+            // Update Flag text
+            // document.getElementById('flag-text-left').textContent = translations[lang]['flag-text']; // Removed
+            // document.getElementById('flag-text-right').textContent = translations[lang]['flag-text']; // Removed
+
+            // Update pop-up content if it's visible
+            if (popupOverlay.classList.contains('visible')) {
+                showPopup(
+                    translations[lang]['popup-title'], // Now uses dynamic title
+                    currentPopupContent.imageUrl, // Use stored image URL
+                    translations[lang]['popup-description'],
+                    currentPopupContent.buttonText, // Use stored button text
+                    currentPopupContent.buttonLink // Use stored button link
+                );
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeMatrixRain();
+            setInterval(drawMatrixRain, 33); // Approximately 30 FPS
+
+            window.addEventListener('resize', initializeMatrixRain); // Re-initialize on resize
+
+            // Set default language to English
+            setLanguage('en'); // This will now correctly start the typing effect.
+        });
+    </script>
+</body>
+</html>
